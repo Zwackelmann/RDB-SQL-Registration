@@ -1,0 +1,340 @@
+@(groups: List[model.RDBGroup], registrationForm: Form[model.RegistrationData])
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <style type="text/css">
+        body { font-size: 16px; margin: 0; font-family: Arial, sans-serif; color: #222; }
+        a { color: #2518B5; text-decoration: none; }
+        p { margin: 1em 0 2em 0; }
+        h1 { font-size: 1.5em; margin: 2em 0 1em 0; color: #DD4B39; text-align: center; }
+        ol { margin: 0 0 1em 0; padding: 0; text-align: center; list-style-type: none; }
+        li { display: inline-block; }
+        form { margin: 0 auto; max-width: 800px; }
+        table { border-collapse: collapse; }
+        tbody td:first-child { padding-right: 1em; text-align: right; vertical-align: middle; white-space: nowrap; }
+        tbody td:last-child { width: 100%; padding-right: 1.2em; }
+        fieldset { border: 0.1em solid #444; }
+        fieldset[id]:not(:target) { display: none; }
+        fieldset#step4:not(:target) + fieldset#step3:not(:target) + fieldset#step2:not(:target) + fieldset#step1,
+        fieldset[id]:target { display: block; }
+        legend { font-style: italic; font-weight: bold; color: #00802A; }
+        input, button { font-size: 1em; font-family: Arial; }
+        a.button, button { display: inline-block; margin: 2em 0.5em 0 0.5em; padding: 0.2em 0.5em; text-decoration: none; border: 0.1em solid #ddd; background-color: #eee; cursor: pointer; }
+        a.button { color: #222; }
+        button { color: #00802A; }
+        input { width: 100%; padding: 0.4em; border: 0.1em solid #444; background-position: right center; background-repeat: no-repeat; }
+        input:valid { color: #00802A; border-color: #00802A; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAepJREFUeNrEk79PFEEUx9/uDDd7v/AAQQnEQokmJCRGwc7/QeM/YGVxsZJQYI/EhCChICYmUJigNBSGzobQaI5SaYRw6imne0d2D/bYmZ3dGd+YQKEHYiyc5GUyb3Y+77vfeWNpreFfhvXfAWAAJtbKi7dff1rWK9vPHx3mThP2Iaipk5EzTg8Qmru38H7izmkFHAF4WH1R52654PR0Oamzj2dKxYt/Bbg1OPZuY3d9aU82VGem/5LtnJscLxWzfzRxaWNqWJP0XUadIbSzu5DuvUJpzq7sfYBKsP1GJeLB+PWpt8cCXm4+2+zLXx4guKiLXWA2Nc5ChOuacMEPv20FkT+dIawyenVi5VcAbcigWzXLeNiDRCdwId0LFm5IUMBIBgrp8wOEsFlfeCGm23/zoBZWn9a4C314A1nCoM1OAVccuGyCkPs/P+pIdVIOkG9pIh6YlyqCrwhRKD3GygK9PUBImIQQxRi4b2O+JcCLg8+e8NZiLVEygwCrWpYF0jQJziYU/ho2TUuCPTn8hHcQNuZy1/94sAMOzQHDeqaij7Cd8Dt8CatGhX3iWxgtFW/m29pnUjR7TSQcRCIAVW1FSr6KAVYdi+5Pj8yunviYHq7f72po3Y9dbi7CxzDO1+duzCXH9cEPAQYAhJELY/AqBtwAAAAASUVORK5CYII=); }
+        input:invalid { color: #DD4B39; border-color: #DD4B39; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAT1JREFUeNpi/P//PwMpgImBRMACY/x7/uDX39sXt/67cMoDyOVgMjBjYFbV/8kkqcCBrIER5KS/967s+rmkXxzI5wJiRSBm/v8P7NTfHHFFl5mVdIzhGv4+u///x+xmuAlcdXPB9KeqeLgYd3bDU2ZpRRmwH4DOeAI07QXIRKipYPD35184/nn17CO4p/+cOfjl76+/X4GYAYThGn7/g+Mfh/ZZwjUA/aABpJVhpv6+dQUjZP78Z0YEK7OezS2gwltg64GmfTu6i+HL+mUMP34wgvGvL78ZOEysf8M1sGgZvQIqfA1SDAL8iUUMPIFRQLf+AmMQ4DQ0vYYSrL9vXDz2sq9LFsiX4dLRA0t8OX0SHKzi5bXf2HUMBVA0gN356N7p7xdOS3w5fAgcfNxWtn+BJi9gVVBOQfYPQIABABvRq3BwGT3OAAAAAElFTkSuQmCC); }
+        input:invalid + div:after { content: attr(data-error); }
+        input:invalid + div { margin-top: 0.2em; color: #DD4B39; }
+        *[data-id] { color: #00802A; }
+        td#message { color: #DD4B39; }
+    </style>
+</head>
+<body>
+    <h1>Tutoriums registration for RDB1 and SQL Lab</h1>
+    <!-- <input type="button" onClick="fillFormWithDebugValues()" value="Fill form with debug values" /><br> -->
+    <ol>
+        <li><a class="button" href="#step1">Step 1</a></li>
+        <li><a class="button" href="#step2">Step 2</a></li>
+        <li><a class="button" href="#step3">Step 3</a></li>
+        <li><a class="button" href="#step4">Step 4</a></li>
+    </ol>
+    <form method="POST" action="/register">
+        <fieldset id="step4">
+            <legend>Step 4 of 4</legend>
+            <p>Finally, read the provided information carefully and click the button if everything is correct. <strong>After submitting this form, you can only change your information by <a href="http://www.ifis.cs.tu-bs.de/staff/wille">contacting us</a>!</strong></p>
+            <table>
+                <tbody>
+                    <tr>
+                        <td><a href="#step1">Mat. No.</a> *</td>
+                        <td data-id="matriculationnumber"></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step2">Lastname</a> *</td>
+                        <td data-id="lastname"></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step2">Firstname</a> *</td>
+                        <td data-id="firstname"></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step2">Email</a> *</td>
+                        <td data-id="email"></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step3">Teammate's Mat. No.</a>&nbsp;&nbsp;&nbsp;</td>
+                        <td data-id="teammate"></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step3">First pick</a> *</td>
+                        <td>Tutorial Group <span data-id="pick1"></span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step3">Second pick</a> *</td>
+                        <td>Tutorial Group <span data-id="pick2"></span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step3">Third pick</a> *</td>
+                        <td>Tutorial Group <span data-id="pick3"></span></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td id="message" colspan="2">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <a class="button" href="#step3">Go back</a>
+                            <button id="send">Send your picks</button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </fieldset>
+        <fieldset id="step3">
+            <legend>Step 3 of 4</legend>
+            <p>You will have to hand in your homework results in groups of two. If you have a <strong>preferred teammate</strong>, enter his/her <strong>matriculation number</strong> in the optional input field. Make sure your partner does the same with your matriculation number. If you leave the field blank, we will assign you a group partner.</p>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label for="temmate">Teammate's Mat. No.</label>
+                        </td>
+                        <td>
+                            <input type="text" id="teammate" placeholder="(optional) your teammate's matriculation number" pattern="\d{7}" name="teammate" value="@registrationForm.data.getOrElse("teammate", "")" />
+                            <div data-error="Please enter a seven digit number."></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="pick1">First pick *</label>
+                        </td>
+                        <td>
+                            <select id="pick1" required="required" name="pick1">
+                                <option value="0" @if(!registrationForm.data.contains("pick1") || registrationForm.data("pick1") == 0) { selected = "selected" } else { }>your first pick</option>
+                                @for(group <- groups) {
+                                    <option value="@group.number" @if(registrationForm.data.contains("pick1") && registrationForm.data("pick1") == group.number) { selected = "selected" } else { } >Tutorial Group @group.number (@group.regularDate)</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="pick2">Second pick *</label>
+                        </td>
+                        <td>
+                            <select id="pick2" required="required" name="pick2">
+                                <option value="0" @if(!registrationForm.data.contains("pick2") || registrationForm.data("pick2") == 0) { selected = "selected" } else { }>your second pick</option>
+                                @for(group <- groups) {
+                                    <option value="@group.number" @if(registrationForm.data.contains("pick2") && registrationForm.data("pick2") == group.number) { selected = "selected" } else { } >Tutorial Group @group.number (@group.regularDate)</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="pick3">Third pick *</label>
+                        </td>
+                        <td>
+                            <select id="pick3" required="required" name="pick3">
+                                <option value="0" @if(!registrationForm.data.contains("pick3") || registrationForm.data("pick3") == 0) { selected = "selected" } else { }>your third pick</option>
+                                @for(group <- groups) {
+                                    <option value="@group.number" @if(registrationForm.data.contains("pick3") && registrationForm.data("pick3") == group.number) { selected = "selected" } else { } >Tutorial Group @group.number (@group.regularDate)</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">
+                            <a class="button" href="#step2">Go back</a>
+                            <a class="button" href="#step4">Continue</a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </fieldset>
+        <fieldset id="step2">
+            <legend>Step 2 of 4</legend>
+            <p>Enter your <strong>firstname</strong>, <strong>lastname</strong> and <strong>email address</strong> to continue.</p>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label for="firstname">Firstname *</label>
+                        </td>
+                        <td>
+                            <input type="text" id="firstname" placeholder="your firstname" required="required" pattern=".+" name="firstname" value="@registrationForm.data.getOrElse("firstname", "")" />
+                            <div data-error="Please enter at least one letter."></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="lastname">Lastname *</label>
+                        </td>
+                        <td>
+                            <input type="text" id="lastname" placeholder="your lastname" required="required" pattern=".+" name="lastname" value="@registrationForm.data.getOrElse("lastname", "")" />
+                            <div data-error="Please enter at least one letter."></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="email">Email *</label>
+                        </td>
+                        <td>
+                            <input type="email" id="email" placeholder="your email address" required="required" pattern=".+@@.+" name="email" value="@registrationForm.data.getOrElse("email", "")"/>
+                            <div data-error="Please enter a valid email address."></div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">
+                            <a class="button" href="#step1">Go back</a>
+                            <a class="button" href="#step3">Continue</a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </fieldset>
+        <fieldset id="step1">
+            <legend>Step 1 of 4</legend>
+            <p>Please enter your <strong>matriculation number</strong> to start the registration process.</p>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label for="matriculationnumber">Mat. No. *</label>
+                        </td>
+                        <td>
+                            <input type="text" id="matriculationnumber" placeholder="matriculation number" required="required" pattern="\d{7}" name="matriculationnumber" value="@registrationForm.data.getOrElse("matriculationnumber", "")"/>
+                            <div data-error="Please enter a seven digit number."></div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">
+                            <a class="button" href="#step2">Start</a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </fieldset>
+    </form>
+    <script type="text/javascript">
+        
+        /* function fillFormWithDebugValues() {
+            document.querySelector("#matriculationnumber").value = "1234567"
+            document.querySelector("#firstname").value = "Max"
+            document.querySelector("#lastname").value = "Müller"
+            document.querySelector("#email").value = "m.mueller@@tu-bs.de"
+            document.querySelector("#teammate").value = "2345678"
+            document.querySelector("#pick1").selectedIndex = 1
+            document.querySelector("#pick2").selectedIndex = 2
+            document.querySelector("#pick3").selectedIndex = 3
+            updateAll();
+        }*/
+
+        function addListener(elem, event, f) {
+            if (elem.addEventListener) elem.addEventListener(event, f, false);
+            else elem.attachEvent("on"+event, f);
+        }
+        
+        function update(elem, value) {
+            var companion = document.querySelector("*[data-id="+elem.id+"]");
+            var message = document.querySelector("td#message");
+            companion.innerHTML = value;
+            message.innerHTML = "";
+        }
+        
+        function validate() {
+            var regex = new RegExp("^"+this.pattern+"$");
+            var value = this.value;
+            if (value.search(regex) > -1) update(this, value);
+            else update(this, "");
+        }
+        
+        var inputs = document.querySelectorAll("input[id][pattern]");
+        for(var index = 0; index < inputs.length; index++) {
+            var input = inputs.item(index);
+            addListener(input, "change", validate);
+        }
+        
+        function updateAll() {
+            for(var index = 0; index < inputs.length; index++) {
+                var input = inputs.item(index);
+                triggerUpdate(input);
+            }
+
+            for(var index = 0; index < selects.length; index++) {
+                var select = selects.item(index);
+                triggerUpdate(select);
+            }
+            console.log("everything updated")
+        }
+        
+        function triggerUpdate(element) {
+            if ("createEvent" in document) {
+                var evt = document.createEvent("HTMLEvents");
+                evt.initEvent("change", false, true);
+                element.dispatchEvent(evt);
+            } else {
+                element.fireEvent("onchange");
+            }
+        }
+
+        function crossValidate(selects) {
+            return function() {
+                function isValid(array) {
+                    var values = {};
+                    for (var index = 0; index < array.length; index++) {
+                        var value = array[index].value;
+                        if (value == "0" || values.hasOwnProperty(value)) return false;
+                        else values[value] = true;
+                    }
+                    return true;
+                }
+                for (var index = 0; index < selects.length; index++) {
+                    var select = selects[index];
+                    update(select, isValid(selects) ? select.value : "");
+                }
+            };
+        }
+        
+        var selects = document.querySelectorAll("select[id]");
+        for (var i = 0; i < selects.length; i++) {
+            var select = selects[i];
+            addListener(select, "change", crossValidate(selects));
+        }
+        
+        function validateSend(event) {
+            function filledOut(dataIds) {
+                for (var index = 0; index < dataIds.length; index++) {
+                    var content = dataIds[index].innerHTML;
+                    if (content == "") return false;
+                }
+                return true;
+            }
+            event.preventDefault();
+            var dataIds = document.querySelectorAll("fieldset#step4 *[data-id]:not([data-id=teammate])");
+            if (filledOut(dataIds)) {
+                var warning = "After submitting this form, you can only change your information by contacting us. Please make sure all information is correct!";
+                if (confirm(warning)) this.form.submit();
+            } else {
+                var message = document.querySelector("td#message");
+                message.innerHTML = "All required fields (*) must be filled out before sending!";
+            }
+        }
+        
+        var send = document.querySelector("button#send");
+        addListener(send, "click", validateSend);
+
+        updateAll();
+    </script>
+</body>
+</html>
