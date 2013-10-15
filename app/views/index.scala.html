@@ -1,4 +1,4 @@
-@(groups: List[model.RDBGroup], registrationForm: Form[model.RegistrationData], showErrorMessage: Boolean)
+@(groups: List[model.RDBGroup], registrationForm: Form[model.RegistrationData])(implicit flash: Flash)
 
 <!DOCTYPE html>
 <html>
@@ -35,6 +35,7 @@
 </head>
 <body>
     <h1>Tutoriums registration for RDB1 and SQL Lab</h1>
+    
     <!--input type="button" onClick="fillFormWithDebugValues()" value="Fill form with debug values" /><br-->
     <ol>
         <li><a class="button" href="#step1">Step 1</a></li>
@@ -42,7 +43,7 @@
         <li><a class="button" href="#step3">Step 3</a></li>
         <li><a class="button" href="#step4">Step 4</a></li>
     </ol>
-    <form method="POST" action="/register">
+      @helper.form(routes.Application.register()) {
         <fieldset id="step4">
             <legend>Step 4 of 4</legend>
             <p>Finally, read the provided information carefully and click the button if everything is correct. <strong>After submitting this form, you can only change your information by <a href="http://www.ifis.cs.tu-bs.de/staff/wille">contacting us</a>!</strong></p>
@@ -241,12 +242,22 @@
                     </tr>
                     <tr>
                         <td style="padding-top: 1em; text-align: left; white-space: normal;" colspan="2">
-                            If you have been redirected here, you probably:
-                            (1) already registered (please contact us by <a href="http://www.ifis.cs.tu-bs.de/staff/wille">mail</a>),
-                            (2) forgot to check RDB1 and/or SQL,
-                            (3) chose duplicate tutorial groups,
-                            (4) entered a wrong Mat. No. or email format,
-                            (5) forgot either your firstname or lastname.
+                            @flash.get("status").getOrElse("no_message") match {
+                              case "no_message" => { }
+                              case "register_success" => {<span style="color: #009900; font-weight: bold;">Registration successful.</span>}
+                              case "sql_error" | "form_error" => {
+                                <span style="color: #ff0000; font-weight: bold">Registration not successful.</span> If this message occoures, you probably:<br>
+                                <ul>
+                                  <li style="display: list-item">(1) are already registered (if not sure please contact us by <a href="http://www.ifis.cs.tu-bs.de/staff/wille">mail</a>)</li>
+                                  <li style="display: list-item">(2) forgot to check RDB1 and/or SQL (see page 3)</li>
+                                  <li style="display: list-item">(3) chose duplicate tutorial groups</li>
+                                  <li style="display: list-item">(4) entered a wrong Mat. No. or email format</li>
+                                  <li style="display: list-item">(5) forgot either your firstname or lastname</li>
+                                </ul>
+                                If none of these erros apply to your case, please contact us by <a href="http://www.ifis.cs.tu-bs.de/staff/wille">mail</a>
+                              }
+                              case _ => { }
+                            }
                         </td>
                     </tr>
                 </tbody>
@@ -259,7 +270,7 @@
                 </tfoot>
             </table>
         </fieldset>
-    </form>
+      }
     <script type="text/javascript">
         
         /*

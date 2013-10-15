@@ -6,6 +6,7 @@ import play.api.data._
 import play.api.data.Forms._
 
 import model._
+import views._
 
 object Application extends Controller {
   val matNoRe = """\d{7}""".r
@@ -36,20 +37,19 @@ object Application extends Controller {
     })
   )
 
-  def index = Action {
-    Ok(views.html.index(RDBGroup.list(), registrationForm, false)) 
+  def index = Action { implicit request => 
+    Ok(views.html.index(RDBGroup.list(), registrationForm))
   }
   
   def register = Action { implicit request =>
-    Logger.info(request.queryString.map(t ⇒ ""+t._1+": "+t._2).mkString("\n"))
     registrationForm.bindFromRequest.fold(
-      formWithErrors => Redirect("/"),
+      formWithErrors => Redirect("/").flashing("status" -> "form_error"),
       value => {
         try {
             value.save()
-            Ok(value.toString)
+            Redirect("/").flashing("status" -> "register_success")
         } catch {
-            case(th: Throwable) => Redirect("/") // BadRequest(views.html.index(RDBGroup.list(), registrationForm, true))
+            case(th: Throwable) => Redirect("/").flashing("status" -> "sql_error")
         }
       }
     )
