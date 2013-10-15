@@ -35,7 +35,7 @@
 </head>
 <body>
     <h1>Tutoriums registration for RDB1 and SQL Lab</h1>
-    <!-- <input type="button" onClick="fillFormWithDebugValues()" value="Fill form with debug values" /><br> -->
+    <!--input type="button" onClick="fillFormWithDebugValues()" value="Fill form with debug values" /><br-->
     <ol>
         <li><a class="button" href="#step1">Step 1</a></li>
         <li><a class="button" href="#step2">Step 2</a></li>
@@ -63,6 +63,14 @@
                     <tr>
                         <td><a href="#step2">Email</a> *</td>
                         <td data-id="email"></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step3">Participate in RDB1</a> *</td>
+                        <td data-id="attend_to_rdb">no</td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step3">Participate in SQL Lab</a> *</td>
+                        <td data-id="attend_to_sql">no</td>
                     </tr>
                     <tr>
                         <td><a href="#step3">Teammate's Mat. No.</a>&nbsp;&nbsp;&nbsp;</td>
@@ -110,13 +118,29 @@
                     </tr>
                     <tr>
                         <td>
+                            <label for="attend_to_rdb">Participate in RDB1 *</label>
+                        </td>
+                        <td>
+                            <input type="checkbox" name="attend_to_rdb" id="attend_to_rdb" value="true" @if(registrationForm.data.contains("attend_to_rdb") && registrationForm.data("attend_to_rdb")) { checked = "checked" } else { } />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="attend_to_sql">Participate in SQL Lab *</label>
+                        </td>
+                        <td>
+                            <input type="checkbox" name="attend_to_sql" id="attend_to_sql" value="true" @if(registrationForm.data.contains("attend_to_sql") && registrationForm.data("attend_to_sql")) { checked = "checked" } else { } />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <label for="pick1">First pick *</label>
                         </td>
                         <td>
                             <select id="pick1" required="required" name="pick1">
                                 <option value="0" @if(!registrationForm.data.contains("pick1") || registrationForm.data("pick1") == 0) { selected = "selected" } else { }>your first pick</option>
                                 @for(group <- groups) {
-                                    <option value="@group.number" @if(registrationForm.data.contains("pick1") && registrationForm.data("pick1") == group.number) { selected = "selected" } else { } >Tutorial Group @group.number (@group.regularDate)</option>
+                                    <option value="@group.number" @if(registrationForm.data.contains("pick1") && registrationForm.data("pick1").toString == group.number.toString) { selected = "selected" } else { } >Tutorial Group @group.number (@group.regularDate)</option>
                                 }
                             </select>
                         </td>
@@ -129,7 +153,7 @@
                             <select id="pick2" required="required" name="pick2">
                                 <option value="0" @if(!registrationForm.data.contains("pick2") || registrationForm.data("pick2") == 0) { selected = "selected" } else { }>your second pick</option>
                                 @for(group <- groups) {
-                                    <option value="@group.number" @if(registrationForm.data.contains("pick2") && registrationForm.data("pick2") == group.number) { selected = "selected" } else { } >Tutorial Group @group.number (@group.regularDate)</option>
+                                    <option value="@group.number" @if(registrationForm.data.contains("pick2") && registrationForm.data("pick2").toString == group.number.toString) { selected = "selected" } else { } >Tutorial Group @group.number (@group.regularDate)</option>
                                 }
                             </select>
                         </td>
@@ -142,7 +166,7 @@
                             <select id="pick3" required="required" name="pick3">
                                 <option value="0" @if(!registrationForm.data.contains("pick3") || registrationForm.data("pick3") == 0) { selected = "selected" } else { }>your third pick</option>
                                 @for(group <- groups) {
-                                    <option value="@group.number" @if(registrationForm.data.contains("pick3") && registrationForm.data("pick3") == group.number) { selected = "selected" } else { } >Tutorial Group @group.number (@group.regularDate)</option>
+                                    <option value="@group.number" @if(registrationForm.data.contains("pick3") && registrationForm.data("pick3").toString == group.number.toString) { selected = "selected" } else { } >Tutorial Group @group.number (@group.regularDate)</option>
                                 }
                             </select>
                         </td>
@@ -215,6 +239,16 @@
                             <div data-error="Please enter a seven digit number."></div>
                         </td>
                     </tr>
+                    <tr>
+                        <td style="padding-top: 1em; text-align: left; white-space: normal;" colspan="2">
+                            If you have been redirected here, you probably:
+                            (1) already registered (please contact us by <a href="http://www.ifis.cs.tu-bs.de/staff/wille">mail</a>),
+                            (2) forgot to check RDB1 and/or SQL,
+                            (3) chose duplicate tutorial groups,
+                            (4) entered a wrong Mat. No. or email format,
+                            (5) forgot either your firstname or lastname.
+                        </td>
+                    </tr>
                 </tbody>
                 <tfoot>
                     <tr>
@@ -228,7 +262,8 @@
     </form>
     <script type="text/javascript">
         
-        /* function fillFormWithDebugValues() {
+        /*
+        function fillFormWithDebugValues() {
             document.querySelector("#matriculationnumber").value = "1234567"
             document.querySelector("#firstname").value = "Max"
             document.querySelector("#lastname").value = "Müller"
@@ -238,7 +273,8 @@
             document.querySelector("#pick2").selectedIndex = 2
             document.querySelector("#pick3").selectedIndex = 3
             updateAll();
-        }*/
+        }
+        */
 
         function addListener(elem, event, f) {
             if (elem.addEventListener) elem.addEventListener(event, f, false);
@@ -263,6 +299,26 @@
         for(var index = 0; index < inputs.length; index++) {
             var input = inputs.item(index);
             addListener(input, "change", validate);
+        }
+        
+        function rdbOrSql(checkboxes) {
+            return function() {
+                function atLeastOneChecked() {
+                    for (var index = 0; index < checkboxes.length; index++) {
+                        var checkbox = checkboxes[index];
+                        if (checkbox.checked) return true;
+                    }
+                    return false;
+                }
+                if (atLeastOneChecked() && this.checked) update(this, "yes");
+                else update(this, "no");
+            };
+        }
+        
+        var checkboxes = document.querySelectorAll("input[id][type=checkbox]");
+        for(var index = 0; index < checkboxes.length; index++) {
+            var checkbox = checkboxes.item(index);
+            addListener(checkbox, "change", rdbOrSql(checkboxes));
         }
         
         function updateAll() {
