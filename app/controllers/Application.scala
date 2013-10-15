@@ -36,18 +36,18 @@ object Application extends Controller {
   )
 
   def index = Action {
-    Ok(views.html.index(RDBGroup.list(), registrationForm)) 
+    Ok(views.html.index(RDBGroup.list(), registrationForm, false)) 
   }
   
   def register = Action { implicit request => 
     registrationForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(views.html.index(RDBGroup.list(), formWithErrors)),
+      formWithErrors => Redirect("/"),
       value => {
         try {
             value.save()
             Ok(value.toString)
         } catch {
-            case(th: Throwable) => BadRequest(views.html.index(RDBGroup.list(), registrationForm))
+            case(th: Throwable) => Redirect("/") // BadRequest(views.html.index(RDBGroup.list(), registrationForm, true))
         }
       }
     )
