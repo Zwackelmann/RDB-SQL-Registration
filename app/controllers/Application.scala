@@ -30,7 +30,8 @@ object Application extends Controller {
         case _ => false
       })
     )(RegistrationData.apply)(RegistrationData.unapply).verifying("Group picks must not be equal", regData => regData match {
-      case RegistrationData(_, _, _, _, p1, p2, p3, _, _, _) => List(p1, p2, p3).distinct.size == 3
+      case RegistrationData(_, _, _, _, p1, p2, p3, rdb, sql, _) =>
+        List(p1, p2, p3).distinct.size == 3 && (rdb || sql)
       case _ => false
     })
   )
@@ -39,7 +40,8 @@ object Application extends Controller {
     Ok(views.html.index(RDBGroup.list(), registrationForm, false)) 
   }
   
-  def register = Action { implicit request => 
+  def register = Action { implicit request =>
+    Logger.info(request.queryString.map(t ⇒ ""+t._1+": "+t._2).mkString("\n"))
     registrationForm.bindFromRequest.fold(
       formWithErrors => Redirect("/"),
       value => {
