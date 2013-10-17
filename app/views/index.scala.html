@@ -34,9 +34,9 @@
     </style>
 </head>
 <body>
-    <h1>Tutoriums registration for RDB1 and SQL Lab</h1>
+    @{ /* <h1>Tutoriums registration for RDB1 and SQL Lab</h1> */ }
     
-    <!--input type="button" onClick="fillFormWithDebugValues()" value="Fill form with debug values" /><br-->
+    @{ /* <input type="button" onClick="fillFormWithDebugValues()" value="Fill form with debug values" /><br>  */ }
     <ol>
         <li><a class="button" href="#step1">Step 1</a></li>
         <li><a class="button" href="#step2">Step 2</a></li>
@@ -273,7 +273,7 @@
       }
     <script type="text/javascript">
         
-        /*
+        @{ /*
         function fillFormWithDebugValues() {
             document.querySelector("#matriculationnumber").value = "1234567"
             document.querySelector("#firstname").value = "Max"
@@ -285,7 +285,7 @@
             document.querySelector("#pick3").selectedIndex = 3
             updateAll();
         }
-        */
+        */ }
 
         function addListener(elem, event, f) {
             if (elem.addEventListener) elem.addEventListener(event, f, false);
