@@ -23,7 +23,7 @@ CREATE TABLE registration(
     pick2 INT NOT NULL, 
     pick3 INT NOT NULL, 
     teammate CHAR(7), 
-    attend_to_rdb CHAR(1) NOT NULL CHECK (attendt_to_rdb IN ('t', 'f')), 
+    attend_to_rdb CHAR(1) NOT NULL CHECK (attend_to_rdb IN ('t', 'f')), 
     attend_to_sql CHAR(1) NOT NULL CHECK (attend_to_sql IN ('t', 'f'))
 );
 

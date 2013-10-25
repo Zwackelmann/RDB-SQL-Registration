@@ -25,12 +25,13 @@ object RDBGroup {
     }
 }
 
-case class RegistrationData(val matriculationNumber: String, val firstname: String, val lastname: String, val email: String, val pick1: Int, pick2: Int, pick3: Int, val attendToRDB: Boolean, val attendToSQL: Boolean, val teammate: String) {
+// "teammate" is RDB1, teammate2 is SQL Lab
+case class RegistrationData(val matriculationNumber: String, val firstname: String, val lastname: String, val email: String, val pick1: Int, pick2: Int, pick3: Int, val attendToRDB: Boolean, val attendToSQL: Boolean, val teammate: String, val teammate2: String) {
 
 
     def save() {
         DB.withConnection { conn =>
-            val insertRegistrationStmt = conn.prepareStatement("INSERT INTO registration (matriculationnumber, firstname, lastname, email, pick1, pick2, pick3, attend_to_rdb, attend_to_sql, teammate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+            val insertRegistrationStmt = conn.prepareStatement("INSERT INTO registration (matriculationnumber, firstname, lastname, email, pick1, pick2, pick3, attend_to_rdb, attend_to_sql, teammate, teammate2) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
             insertRegistrationStmt.setString(1, matriculationNumber)
             insertRegistrationStmt.setString(2, firstname)
@@ -42,6 +43,7 @@ case class RegistrationData(val matriculationNumber: String, val firstname: Stri
             insertRegistrationStmt.setString(8, if(attendToRDB) "t" else "f")
             insertRegistrationStmt.setString(9, if(attendToSQL) "t" else "f")
             insertRegistrationStmt.setString(10, if(teammate.length() == 0) null else teammate)
+            insertRegistrationStmt.setString(11, if(teammate2.length() == 0) null else teammate2)
             
             insertRegistrationStmt.executeUpdate();
         }

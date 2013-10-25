@@ -74,8 +74,12 @@
                         <td data-id="attend_to_sql">no</td>
                     </tr>
                     <tr>
-                        <td><a href="#step3">Teammate's Mat. No.</a>&nbsp;&nbsp;&nbsp;</td>
+                        <td><a href="#step3">RDB1 Teammate's Mat. No.</a>&nbsp;&nbsp;&nbsp;</td>
                         <td data-id="teammate"></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#step3">SQL Teammate's Mat. No.</a>&nbsp;&nbsp;&nbsp;</td>
+                        <td data-id="teammate2"></td>
                     </tr>
                     <tr>
                         <td><a href="#step3">First pick</a> *</td>
@@ -110,10 +114,19 @@
                 <tbody>
                     <tr>
                         <td>
-                            <label for="temmate">Teammate's Mat. No.</label>
+                            <label for="temmate">RDB1 Teammate's Mat. No.</label>
                         </td>
                         <td>
-                            <input type="text" id="teammate" placeholder="(optional) your teammate's matriculation number" pattern="\d{7}" name="teammate" value="@registrationForm.data.getOrElse("teammate", "")" />
+                            <input type="text" id="teammate" placeholder="(optional) your RDB1 teammate's matriculation number" pattern="\d{7}" name="teammate" value="@registrationForm.data.getOrElse("teammate", "")" />
+                            <div data-error="Please enter a seven digit number."></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="temmate2">SQL Lab Teammate's Mat. No.</label>
+                        </td>
+                        <td>
+                            <input type="text" id="teammate2" placeholder="(optional) your SQL Lab teammate's matriculation number" pattern="\d{7}" name="teammate2" value="@registrationForm.data.getOrElse("teammate2", "")" />
                             <div data-error="Please enter a seven digit number."></div>
                         </td>
                     </tr>
@@ -280,6 +293,7 @@
             document.querySelector("#lastname").value = "Müller"
             document.querySelector("#email").value = "m.mueller@@tu-bs.de"
             document.querySelector("#teammate").value = "2345678"
+            document.querySelector("#teammate2").value = "1234567"
             document.querySelector("#pick1").selectedIndex = 1
             document.querySelector("#pick2").selectedIndex = 2
             document.querySelector("#pick3").selectedIndex = 3
@@ -388,7 +402,7 @@
                 return true;
             }
             event.preventDefault();
-            var dataIds = document.querySelectorAll("fieldset#step4 *[data-id]:not([data-id=teammate])");
+            var dataIds = document.querySelectorAll("fieldset#step4 *[data-id]:not([data-id^=teammate])");
             if (filledOut(dataIds)) {
                 var warning = "After submitting this form, you can only change your information by contacting us. Please make sure all information is correct!";
                 if (confirm(warning)) this.form.submit();

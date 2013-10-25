@@ -29,9 +29,14 @@ object Application extends Controller {
         case matNoRe() => true
         case "" => true
         case _ => false
+      }),
+      "teammate2" -> text.verifying("no valid matriculation number", matNo => matNo match {
+        case matNoRe() => true
+        case "" => true
+        case _ => false
       })
     )(RegistrationData.apply)(RegistrationData.unapply).verifying("Group picks must not be equal", regData => regData match {
-      case RegistrationData(_, _, _, _, p1, p2, p3, rdb, sql, _) =>
+      case RegistrationData(_, _, _, _, p1, p2, p3, rdb, sql, _, _) =>
         List(p1, p2, p3).distinct.size == 3 && (rdb || sql)
       case _ => false
     })
